@@ -1,0 +1,4 @@
+#!/usr/bin/python
+
+class Solution(object):
+    def lengthOfLongestSubstring(self, s):
