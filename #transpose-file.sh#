@@ -1,8 +1,0 @@
-#!/bin/bash
-
-firsttime=1
-cat file.txt | while read line
-do
-    if [ $firsttime -eq 1 ]
-    then
-	a = 

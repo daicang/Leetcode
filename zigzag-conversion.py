@@ -1,4 +1,4 @@
 #!/usr/bin/python
 
 class Solution(object):
-    def lengthOfLongestSubstring(self, s):
+    def convert(self, s, numRows):
