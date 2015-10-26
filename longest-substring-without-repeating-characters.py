@@ -12,9 +12,7 @@ class Solution(object):
         for i in range(len(s)):
             if s[i] in d:
                 duplicate = max(duplicate, d[s[i]])
-                ret = max(ret, i - max(d[s[i]], duplicate))
-            else:
-                ret = max(ret, i - duplicate)
+            ret = max(ret, i - max(d[s[i]], duplicate))
             d[s[i]] = i
         return ret
         
