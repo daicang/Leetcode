@@ -20,6 +20,8 @@ class Solution(object):
             for i in xrange(start, mid):
                 # j: First index that sum[i, j] >= lower
                 # k: First index that sum[i, k] >  upper
+                # This is merge sort, so no available value after k,
+                # and we use t/cache to sort it.
                 while j < end and sum[j] - sum[i] < lower: j += 1
                 while k < end and sum[k] - sum[i] <= upper: k += 1
                 while t < end and sum[t] < sum[i]:
