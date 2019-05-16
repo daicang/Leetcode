@@ -26,7 +26,7 @@ class Solution(object):
 
         for right in range(length):
             inc(A[right])
-
+            # sliding window
             if A[right] == A[left]:
                 for i in range(left, right+1):
                     if counter[A[i]] > 1:
