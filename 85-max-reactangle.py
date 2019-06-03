@@ -1,6 +1,8 @@
+# *
 class Solution(object):
 
-    def maximalRectangle(self, matrix):
+    # DP
+    def maximalRectangle_dp(self, matrix):
         """
         :type matrix: List[List[str]]
         :rtype: int
@@ -57,7 +59,7 @@ class Solution(object):
 
 
     # Histogram with stack
-    def maximalRectangle_1(self, matrix):
+    def maximalRectangle(self, matrix):
         """
         :type matrix: List[List[str]]
         :rtype: int
@@ -67,20 +69,7 @@ class Solution(object):
         rows = len(matrix)
         cols = len(matrix[0])
 
-        h = []
-        for _ in range(rows):
-            h.append([0]*cols)
-
-        for i in range(rows):
-            for j in range(cols):
-                if j == 0:
-                    h[i][j] = int(matrix[i][j])
-                else:
-                    if int(matrix[i][j]):
-                        h[i][j] = h[i][j-1] + 1
-                    else:
-                        h[i][j] = 0
-
+        # Solve histogram
         def max_hist(l):
             max_area = 0
             stack = [-1]
@@ -99,9 +88,17 @@ class Solution(object):
             return max_area
 
         maxrec = 0
-        for j in range(cols):
-            vector = [h[i][j] for i in range(rows)]
-            maxrec = max(maxrec, max_hist(vector))
+
+        # Convert to histogram
+        h = [0] * cols
+        for i in range(rows):
+            for j in range(cols):
+                if matrix[i][j] == '1':
+                    h[j] = h[j] + 1
+                else:
+                    h[j] = 0
+
+            maxrec = max(maxrec, max_hist(h))
 
         return maxrec
 
