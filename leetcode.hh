@@ -5,6 +5,7 @@
 #include <deque>
 #include <utility>
 #include <map>
+#include <array>
 #include <algorithm>
 
 using namespace std;
