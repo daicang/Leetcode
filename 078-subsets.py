@@ -22,4 +22,3 @@ class Solution(object):
 s = Solution()
 
 print s.subsets([1,2,3])
-
