@@ -6,22 +6,47 @@ class Solution(object):
         :type wordList: List[str]
         :rtype: int
         """
+        if endWord not in wordList:
+            return 0
 
-        def has_edge(w1, w2):
-            flag = 0
-            for i, ch1 in enumerate(w1):
-                ch2 = w2[i]
-                if ch1 != ch2:
-                    if flag == 0:
-                        flag = 1
-                    else:
-                        return False
-            return True
+        from collections import defaultdict
+
+        mapper = defaultdict(list)
+
+        for word in wordList:
+            for i in range(len(word)):
+                key = word[:i] + '*' + word[i+1:]
+                mapper[key].append(word)
 
         queue = [beginWord]
+        level = 0
 
-        def bfs():
+        while queue:
+            neighbors = []
+            level += 1
+
+            for curr in queue:
+                if curr == endWord:
+                    return level
+
+                for i in range(len(curr)):
+                    key = curr[:i] + '*' + curr[i+1:]
+                    if key in mapper:
+                        neighbors.extend(mapper[key])
+                        del mapper[key]
+
+            queue = neighbors
+
+        return 0
 
 
+s = Solution()
+inputs = [
+    ['hit', 'cog', ["hot","dot","dog","lot","log","cog"]],
+    ["hit", "cog", ["hot","dot","dog","lot","log"]],
+    ['a', 'c', ['a', 'b', 'c']]
+]
 
+for i in inputs:
+    print s.ladderLength(*i)
 
