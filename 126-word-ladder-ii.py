@@ -11,60 +11,26 @@ class Solution(object):
 
         from collections import defaultdict
 
+        wordList = set(wordList)
+        layer = {}
+        layer[beginWord] = [[beginWord]]
         ladders = []
-        mapper = defaultdict(list)
-        neighbors = defaultdict(set)
 
-        def keys(word):
-            keys = []
-            for i in range(len(word)):
-                keys.append(word[:i] + '*' + word[i+1:])
-            return keys
+        while layer:
+            next_layer = defaultdict(list)
+            for w in layer:
+                if w == endWord:
+                    for l in layer[w]:
+                        ladders.append(l)
+                else:
+                    for i in range(len(w)):
+                        for ch in 'abcdefghijklmnopqrstuvwxyz':
+                            new_word = ''.join([w[:i], ch, w[i+1:]])
+                            if new_word in wordList:
+                                next_layer[new_word] += [c+[new_word] for c in layer[w]]
 
-        for word in wordList:
-            for key in keys(word):
-                mapper[key].append(word)
-
-        def bfs():
-            queue = [beginWord]
-            end = False
-            level = 0
-
-            while queue and not end:
-                level += 1
-                size = len(queue)
-
-                for i in range(size):
-                    word = queue[i]
-
-                    if word == endWord:
-                        end = True
-
-                    for key in keys(word):
-                        for next_ in mapper[key]:
-                            queue.append(next_)
-                            neighbors[word].add(next_)
-
-            return level
-
-        path_length = bfs()
-        # print neighbors
-
-        def backtrack(word, path, visited_keys, level):
-            if level > path_length:
-                return
-
-            if word == endWord:
-                # print level
-                ladders.append(path+[])
-                return
-
-            for next_ in neighbors[word]:
-                path.append(next_)
-                backtrack(next_, path, visited_keys, level+1)
-                path.pop()
-
-        backtrack(beginWord, [beginWord,], [], 1)
+            wordList -= set(next_layer.keys())
+            layer = next_layer
 
         return ladders
 
