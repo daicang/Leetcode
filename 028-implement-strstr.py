@@ -8,7 +8,7 @@ class Solution(object):
         # KMP algorithm
 
         def compute_lps(s):
-            # Longest prefix given suffix
+            # Longest prefix given suffixpa
             prefix_len = 0
             lps = [0] * len(s)
             i = 1
