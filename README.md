@@ -2,4 +2,4 @@
 
 My leetcode solutions, mostly in Python.
 
-Note: convert to Python3 after 2020
+Note: After 2020, Python major version changed from 2 to 3
