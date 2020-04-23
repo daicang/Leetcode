@@ -20,12 +20,7 @@ class Solution:
                     node.next = l2
                     l2 = l2.next
                 node = node.next
-            if l1:
-                node.next = l1
-            elif l2:
-                node.next = l2
-            else:
-                node.next = None
+            node.next = l1 or l2
             return fake_head.next
 
         p1 = p2 = head
