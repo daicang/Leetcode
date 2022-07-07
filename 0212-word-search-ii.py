@@ -25,6 +25,14 @@ class Solution:
         for _ in range(rows):
             trace.append([False] * cols)
 
+        trie = {}
+        for word in words:
+            node = trie
+            for ch in word:
+                node = node.setdefault(ch, {})
+            node['#'] = word
+
+
         def explore(word, idx, row, col, trace):
             if board[row][col] != word[idx]:
                 return False
