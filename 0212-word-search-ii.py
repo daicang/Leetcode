@@ -11,20 +11,7 @@ class Solution:
         rows = len(board)
         cols = len(board[0])
 
-        def reset_trace(trace):
-            for row in trace:
-                for c in range(len(row)):
-                    row[c] = False
-
-        for row, r in enumerate(board):
-            for col, ch in enumerate(r):
-                char_map[ch].append((row, col))
-
         found = []
-        trace = []
-        for _ in range(rows):
-            trace.append([False] * cols)
-
         trie = {}
         for word in words:
             node = trie
@@ -32,39 +19,29 @@ class Solution:
                 node = node.setdefault(ch, {})
             node['#'] = word
 
+        def backtrack(row, col, parent):
+            ch = board[row][col]
+            node = parent[ch]
+            if node.get('#'):
+                found.append(node['#'])
+                del node['#']
 
-        def explore(word, idx, row, col, trace):
-            if board[row][col] != word[idx]:
-                return False
+            board[row][col] = '#'
 
-            if idx == len(word)-1:
-                return True
-
-            for next_pos in ((row-1, col), (row+1, col), (row, col-1), (row, col+1)):
-                next_row, next_col = next_pos
+            for next_row, next_col in ((row-1, col), (row+1, col), (row, col-1), (row, col+1)):
                 if next_row < 0 or next_col < 0 or next_row >= rows or next_col >= cols:
                     continue
-                if trace[next_row][next_col]:
-                    continue
-                trace[next_row][next_col] = True
-                if explore(word, idx+1, next_row, next_col, trace):
-                    return True
-                trace[next_row][next_col] = False
+                next_char = board[next_row][next_col]
+                if node.get(next_char):
+                    backtrack(next_row, next_col, node)
 
-        for word in words:
-            if len(word) == 0:
-                found.append(word)
-                continue
+            board[row][col] = ch
 
-            reset_trace(trace)
-
-            for pos in char_map[word[0]]:
-                row, col = pos
-                trace[row][col] = True
-                if explore(word, 0, row, col, trace):
-                    found.append(word)
-                    break
-                trace[row][col] = False
+        for row in range(rows):
+            for col in range(cols):
+                ch = board[row][col]
+                if trie.get(ch):
+                    backtrack(row, col, trie)
 
         return found
 
