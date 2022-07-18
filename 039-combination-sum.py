@@ -46,13 +46,12 @@ class Solution(object):
 s = Solution()
 
 inputs = [
-    # [[2,3,6,7], 7],
-    # [[2,3,5], 8],
-    # [[2], 8]
+    [[2,3,6,7], 7],
+    [[2,3,5], 8],
+    [[2], 8],
     [[1,2], 1]
 ]
 
 for input in inputs:
     print('input=%s' % input)
     print(s.combinationSum(*input))
-    print('\n')
