@@ -29,11 +29,9 @@ class Solution:
 
             while downsteps:
                 down_h, down_idx = downsteps[0]
-                assert down_h < 0
                 down_h *= -1
                 # print('check down at %s from %s' % (down_idx, down_h))
                 if down_idx <= curr_idx:
-                    heapq.heap(downsteps)
                     continue
 
                 if next_li and down_idx > next_li:
@@ -45,7 +43,6 @@ class Solution:
                 down_height = 0
                 while downsteps:
                     next_height, next_down_idx = downsteps[0]
-                    assert next_height < 0
                     next_height *= -1
                     if next_down_idx > down_idx:
                         down_height = next_height
@@ -92,3 +89,8 @@ inputs = [
 
 for i in inputs:
     print(s.getSkyline(i))
+
+# Success
+# Details
+# Runtime: 154 ms, faster than 79.82% of Python3 online submissions for The Skyline Problem.
+# Memory Usage: 18.7 MB, less than 99.36% of Python3 online submissions for The Skyline Problem.
