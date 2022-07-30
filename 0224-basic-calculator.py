@@ -61,6 +61,7 @@ class Solution:
         # print(tokens)
         stack = []
 
+        # Solve all parens, in reverse order
         for token in tokens[::-1]:
             match token.typ:
                 case tk.lparen:
@@ -87,6 +88,7 @@ class Solution:
         stack_sum = 0
         positive = True
 
+        # Solve thre rest with no parenthese, in reverse order
         while stack:
             token = stack.pop()
             match token.typ:
