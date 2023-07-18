@@ -1,4 +1,5 @@
-# *
+from typing import List
+
 class Solution(object):
 
     # DP
@@ -57,9 +58,48 @@ class Solution(object):
         return max_area
 
 
+    def maximalRectangle(self, matrix: List[List[str]]) -> int:
+        def calc_max_area(arr):
+            # Monotonic stack
+            # The stack keeps index of first smaller element on the left
+            max_area = 0
+            stack = []
+            arr.append(-1)
+            for i, val in enumerate(arr):
+                while stack and val <= arr[stack[-1]]:
+                    j = stack.pop()
+                    # For every greater element poped:
+                    # the area is arr[idx] * (k, i)
+                    k = -1
+                    if stack:
+                        k = stack[-1]
+                    max_area = max(max_area, (i-k-1) * arr[j])
+                stack.append(i)
+            return max_area
+
+        if not matrix or not matrix[0]:
+            return 0
+
+        rows = len(matrix)
+        cols = len(matrix[0])
+        arr = [0] * cols
+        max_area = 0
+
+        for r in range(rows):
+            for c in range(cols):
+                if matrix[r][c] == '0':
+                    arr[c] = 0
+                else:
+                    arr[c] = arr[c] + 1
+            max_area = max(max_area, calc_max_area(arr))
+
+        return max_area
+
+
+
 
     # Histogram with stack
-    def maximalRectangle(self, matrix):
+    def maximalRectangle_stack(self, matrix):
         """
         :type matrix: List[List[str]]
         :rtype: int
@@ -104,12 +144,25 @@ class Solution(object):
 
 
 s = Solution()
-print(s.maximalRectangle([['1']]))
-print(s.maximalRectangle([["1","0","1","0","0"],
-                          ["1","0","1","1","1"],
-                          ["1","1","1","1","1"],
-                          ["1","0","0","1","0"]]))
 
-print(s.maximalRectangle([['0', '0', '0'],
-                          ['0', '0', '0'],
-                          ['1', '1', '1']]))
+inputs = (
+    [['1']],
+    [
+        ["1","0","1","0","0"],
+        ["1","0","1","1","1"],
+        ["1","1","1","1","1"],
+        ["1","0","0","1","0"]
+    ],
+    [
+        ['0', '0', '0'],
+        ['0', '0', '0'],
+        ['1', '1', '1']
+    ],
+    [
+        ["0","0","1"],
+        ["1","1","1"]
+    ],
+)
+
+for i in inputs:
+    print(s.maximalRectangle(i))
