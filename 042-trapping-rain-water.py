@@ -30,7 +30,4 @@ inputs = [
 ]
 
 for input in inputs:
-    print input
-    print s.trap(input)
-
-
+    print(s.trap(input))
