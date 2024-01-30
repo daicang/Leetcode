@@ -53,10 +53,12 @@ class Solution(object):
 s = Solution()
 
 inputs = [
-    [["X","O","X","O","X","O"],["O","X","O","X","O","X"],["X","O","X","O","X","O"],["O","X","O","X","O","X"]],
+    [["X","O","X","O","X","O"],
+    ["O","X","O","X","O","X"],
+    ["X","O","X","O","X","O"],
+    ["O","X","O","X","O","X"]],
 ]
 
 for i in inputs:
     s.solve(i)
     print i
-
