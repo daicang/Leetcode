@@ -17,36 +17,44 @@ class Solution(object):
 
         parent = fake_root
         node = root
+        go_left = True
+
         while True:
             if node is None:
                 # Not found
                 return root
-
-            if node.val == key:
-                break
             if key < node.val:
                 parent = node
                 node = node.left
-            else:
+                go_left = True
+            elif key > node.val:
                 parent = node
                 node = node.right
-
-        def update_parent(parent, child, new_child):
-            if parent.left == child:
-                parent.left = new_child
+                go_left = False
             else:
-                parent.right = new_child
+                break
 
         # Now node.val == key
-        if node.left is None or node.right is None:
-            update_parent(parent, node, node.left or node.right)
-
+        if node.left is None:
+            if go_left:
+                parent.left = node.right
+            else:
+                parent.right = node.right
+        elif node.right is None:
+            if go_left:
+                parent.left = node.left
+            else:
+                parent.right = node.left
         else:
-            # Replace node with minimal node in right child
+            # node has both lchild and rchild
+            # find minimal node in right child
             if not node.right.left:
                 # The minimal node is the right child
                 node.right.left = node.left
-                update_parent(parent, node, node.right)
+                if go_left:
+                    parent.left = node.right
+                else:
+                    parent.right = node.right
             else:
                 # The minimal node is the leftmost node in right subtree
                 rmin_parent = node.right
@@ -58,6 +66,9 @@ class Solution(object):
                 rmin_parent.left = rmin.right
                 rmin.right = node.right
                 rmin.left = node.left
-                update_parent(parent, node, rmin)
+                if go_left:
+                    parent.left = rmin
+                else:
+                    parent.right = rmin
 
         return fake_root.left
