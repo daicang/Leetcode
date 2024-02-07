@@ -3,6 +3,18 @@ from typing import List
 
 class Solution:
     def coinChange(self, coins: List[int], amount: int) -> int:
+        dp = [float('inf')] * (amount+1)
+        dp[0] = 0
+
+        for c in coins:
+            for r in range(c, amount+1):
+                dp[r] = min(dp[r], dp[r-c]+1)
+        if dp[amount] == float('inf'):
+            return -1
+        return dp[amount]
+
+
+    def coinChange(self, coins: List[int], amount: int) -> int:
         memo = [None] * (amount+1)
         memo[0] = 0
         coins.sort()

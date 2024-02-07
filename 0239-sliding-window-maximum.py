@@ -4,31 +4,26 @@ from collections import deque
 
 class Solution:
     def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
-        tracker = deque()
+        q = deque()
+        ret = []
+
         for i in range(k):
-            elem = nums[i]
-            while len(tracker) > 0 and tracker[-1] < elem:
-                tracker.pop()
-            tracker.append(elem)
+            while q and nums[q[-1]] < nums[i]:
+                q.pop()
+            q.append(i)
 
-        results = []
-        end_idx = k-1
+        ret.append(nums[q[0]])
 
-        while end_idx < len(nums):
-            results.append(tracker[0])
+        for i in range(k, len(nums)):
+            while q and q[0] <= i-k:
+                q.popleft()
+            while q and nums[q[-1]] < nums[i]:
+                q.pop()
+            q.append(i)
+            ret.append(nums[q[0]])
 
-            if end_idx + 1 < len(nums): # prepare for next move
-                start_idx = end_idx - k + 1
-                if nums[start_idx] == tracker[0]:
-                    tracker.popleft()
-                next_elem = nums[end_idx+1]
-                while len(tracker) > 0 and tracker[-1] < next_elem:
-                    tracker.pop()
-                tracker.append(next_elem)
+        return ret
 
-            end_idx += 1
-
-        return results
 
 inputs = [
     [[1,3,-1,-3,5,3,6,7], 3],
