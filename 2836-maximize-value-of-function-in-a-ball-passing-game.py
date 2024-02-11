@@ -52,16 +52,6 @@ class Solution:
                 # calculate new profit
                 profit[i][start] = profit[i-1][start] + profit[i-1][end]
 
-        def solve(bi, n):
-            if bi == bl:
-                return 0
-            if (k & (1 << bi)) == 0:
-                return solve(bi+1, n)
-            return profit[bi][n] + solve(bi+1, ends[bi][n])
-
-        return max([solve(0, i)+i for i in range(n)])
-
-
         # Final values starting from i
         values = [i for i in range(n)]
 
@@ -70,12 +60,21 @@ class Solution:
             if k & (1<<bi) == 0:
                 # skip if bit not set
                 continue
-            for start in range(n):
+            new_values = [None] * n
+            for i, val in enumerate(values):
+                if val is None:
+                    # unreachable
+                    continue
                 # after 2^bi iteration, end index is ends[bi][start]
                 # the values gained is profit[bi][start]
-                values[ends[bi][start]] += profit[bi][start]
+                end = ends[bi][i]
+                if new_values[end] is None:
+                    new_values[end] = val + profit[bi][i]
+                else:
+                    new_values[end] = max(new_values[end], val + profit[bi][i])
+            values = new_values
 
-        return max(values)
+        return max([x for x in values if x is not None])
 
 
 

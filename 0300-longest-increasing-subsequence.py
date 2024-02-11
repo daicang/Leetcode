@@ -1,3 +1,4 @@
+import bisect
 
 class Solution:
     def lengthOfLIS(self, nums: List[int]) -> int:
@@ -9,3 +10,13 @@ class Solution:
                     dp[i] = max(dp[i], dp[j]+1)
 
         return max(dp)
+
+    def lengthOfLIS_bisearch(self, nums: List[int]) -> int:
+        lis = []
+        for n in nums:
+            index = bisect.bisect_left(lis, n)
+            if index < len(lis):
+                lis[index] = n
+            else:
+                lis.append(n)
+        return len(lis)
