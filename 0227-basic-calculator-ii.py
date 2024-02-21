@@ -15,9 +15,64 @@ class Token:
 
 
 class Solution:
-    def calculate(self, s: str) -> int:
-        # Lexing
+    def lexer(self, s):
+        tokens = []
+        i = 0
 
+        while True:
+            while i < len(s) and s[i] == ' ':
+                i += 1
+            if i == len(s):
+                break
+            if s[i].isdigit():
+                value = 0
+                while i < len(s) and s[i].isdigit():
+                    value = value * 10 + int(s[i])
+                    i += 1
+                tokens.append(value)
+            else:
+                tokens.append(s[i])
+                i += 1
+
+        return tokens
+
+    def eval(self, tokens):
+        stack = []
+        sign = 1
+        op = None
+        for token in tokens:
+            if isinstance(token, int):
+                stack.append(sign * token)
+                sign = 1
+                # LR(2) parsing
+                if op == '*':
+                    stack.append(stack.pop() * stack.pop())
+                    op = None
+                elif op == '/':
+                    n1 = stack.pop()
+                    n2 = stack.pop()
+                    if n1*n2 < 0:
+                        stack.append(-(-n2//n1))
+                    else:
+                        stack.append(n2//n1)
+                    op = None
+            elif token == '+':
+                sign = 1
+            elif token == '-':
+                sign = -1
+            else:
+                assert token in ('*', '/')
+                assert op is None
+                op = token
+        return sum(stack)
+
+    def calculate(self, s: str) -> int:
+        tokens = self.lexer(s)
+        return self.eval(tokens)
+
+
+    def calculate_0(self, s: str) -> int:
+        # Lexing
         i = 0
         tokens = []
 
@@ -86,9 +141,10 @@ class Solution:
 s = Solution()
 
 inputs = [
-    "3+2*2",
-    " 3/2 ",
-    " 3+5 / 2 ",
+    "3+2*2",  # 7
+    " 3/2 ",  # 1
+    " 3+5 / 2 ",  # 5
+    "14-3/2",  # 13
 ]
 
 for i in inputs:

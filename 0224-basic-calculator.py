@@ -2,19 +2,116 @@
 
 from types import SimpleNamespace
 
+from collections import deque
+
 
 class Token:
     def __init__(self, typ=None, val=None):
-        self.typ = typ
+        self.type = typ
         self.val = val
 
     def __repr__(self):
         if self.val is not None:
             return str(self.val)
-        return str(self.typ)
+        return str(self.type)
 
 class Solution:
+    def lexer(self, s):
+        tokens = deque()
+        i = 0
+
+        while True:
+            while i < len(s) and s[i] == ' ':
+                i += 1
+            if i == len(s):
+                break
+
+            if s[i].isdigit():
+                val = 0
+                while i < len(s) and s[i].isdigit():
+                    val *= 10
+                    val += int(s[i])
+                    i += 1
+                tokens.append(val)
+            elif s[i] == '+':
+                i += 1
+                tokens.append('add')
+            elif s[i] == '-':
+                i += 1
+                tokens.append('sub')
+            elif s[i] == '(':
+                i += 1
+                tokens.append('lpr')
+            elif s[i] == ')':
+                i += 1
+                tokens.append('rpr')
+            else:
+                raise Exception(f'invalid token {s[i]}')
+
+        return tokens
+
+    def eval_stack(self, tokens):
+        # eval braces with stack
+        stack = []
+        sign = 1
+        for token in tokens:
+            if isinstance(token, int):
+                stack.append(sign * token)
+                sign = 1
+            elif token == 'add':
+                sign = 1
+            elif token == 'sub':
+                sign = -1
+            elif token == 'lpr':
+                stack.append(sign)
+                stack.append(token)
+                sign = 1
+            elif token == 'rpr':
+                value = 0
+                while True:
+                    token = stack.pop()
+                    if isinstance(token, int):
+                        value += token
+                    else:  # lpr
+                        break
+                sign = stack.pop()
+                stack.append(sign * value)
+            else:
+                raise Exception('invalid token')
+        return sum(stack)
+
+    def eval(self, tokens):
+        # eval braces with recursion
+        result = 0
+        sign = 1
+        while tokens:
+            token = tokens.popleft()
+            if isinstance(token, int):
+                result += sign * token
+                sign = 1
+            elif token == 'add':
+                continue
+            elif token == 'sub':
+                sign = -1
+            elif token == 'lpr':
+                result += sign * self.eval(tokens)
+                sign = 1
+            elif token == 'rpr':
+                break
+            else:
+                raise Exception('unknown token')
+
+        return result
+
+
     def calculate(self, s: str) -> int:
+        tokens = self.lexer(s)
+        # return self.eval(tokens)
+        return self.eval_stack(tokens)
+
+
+
+    def calculate_0(self, s: str) -> int:
         # Lexing
         tk = SimpleNamespace()
         tk.num = 'num'
