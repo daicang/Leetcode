@@ -6,62 +6,54 @@ class Solution:
         if len(arr) == 1:
             return 1
 
-        cache = [None] * len(arr)
+        dp = [None] * len(arr)
 
         def finished(i):
-            if i == 0 and arr[i] <= arr[i+1]:
+            if i == 0 and arr[0] <= arr[1]:
                 return True
-            if i == len(arr)-1 and arr[i-1] >= arr[i]:
+            elif i == len(arr)-1 and arr[-2] >= arr[-1]:
                 return True
-            if arr[i-1] >= arr[i] and arr[i+1] >= arr[i]:
+            elif arr[i-1] >= arr[i] and arr[i+1] >= arr[i]:
                 return True
-            return False
+            else:
+                return False
 
-        def dp(i):
-            if i is None:
-                return 0
-
-            if cache[i] is not None:
-                return cache[i]
+        def solve(i):
+            if dp[i] is not None:
+                return dp[i]
 
             if finished(i):
-                return 1
+                dp[i] = 1
+                return dp[i]
 
             left_max_idxs = []
-            left_max = None
-            for j in range(i-1, i-d-1, -1):
-                if j < 0 or arr[j] >= arr[i]:
+            left_max = 0
+            for j in range(i-1, max(-1, i-d-1), -1):
+                if arr[j] >= arr[i]:
                     break
-                if left_max is None or arr[j] > left_max:
+                if arr[j] > left_max:
                     left_max = arr[j]
-
-            for j in range(i-1, i-d-1, -1):
-                if j < 0 or arr[j] >= arr[i]:
-                    break
-                if arr[j] == left_max:
+                    left_max_idxs = [j]
+                elif arr[j] == left_max:
                     left_max_idxs.append(j)
 
             right_max_idxs = []
-            right_max = None
-            for j in range(i+1, i+d+1):
-                if j >= len(arr) or arr[j] >= arr[i]:
+            right_max = 0
+            for j in range(i+1, min(i+d+1, len(arr))):
+                if arr[j] >= arr[i]:
                     break
-                if right_max is None or arr[j] > right_max:
+                if arr[j] > right_max:
                     right_max = arr[j]
-
-            for j in range(i+1, i+d+1):
-                if j >= len(arr) or arr[j] >= arr[i]:
-                    break
-                if arr[j] == right_max:
+                    right_max_idxs = [j]
+                elif arr[j] == right_max:
                     right_max_idxs.append(j)
 
-            cache[i] = 1 + max([dp(i) for i in left_max_idxs+right_max_idxs])
-            return cache[i]
+            dp[i] = 1 + max([solve(i) for i in left_max_idxs+right_max_idxs])
+            return dp[i]
 
         max_jump = 0
         for i in range(len(arr)):
-            # print(arr[i], dp(i))
-            max_jump = max(max_jump, dp(i))
+            max_jump = max(max_jump, solve(i))
 
         return max_jump
 
@@ -79,4 +71,3 @@ s = Solution()
 
 for d in data:
     print(s.maxJumps(*d))
-
