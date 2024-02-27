@@ -31,4 +31,3 @@ class Solution(object):
                 while curr.left:
                     stack.append(curr.left)
                     curr = curr.left
-

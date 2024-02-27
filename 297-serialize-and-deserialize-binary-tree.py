@@ -1,68 +1,74 @@
-import Queue
 # Definition for a binary tree node.
-
-
 class TreeNode(object):
     def __init__(self, x):
         self.val = x
         self.left = None
         self.right = None
 
-
 class Codec:
 
     def serialize(self, root):
         """Encodes a tree to a single string.
+
         :type root: TreeNode
         :rtype: str
         """
-        q = Queue.Queue()
-        q.put(root)
-        vals = []
+        def traverse(node):
+            if node is None:
+                return ['#']
 
-        while not q.empty():
-            curr = q.get()
-            if curr:
-                vals.append(str(curr.val))
-                q.put(curr.left)
-                q.put(curr.right)
-            else:
-                vals.append('None')
+            ret = [str(node.val)]
+            ret.extend(traverse(node.left))
+            ret.extend(traverse(node.right))
+            return ret
 
-        return '.'.join(vals)
+        return ','.join(traverse(root))
 
     def deserialize(self, data):
         """Decodes your encoded data to tree.
+
         :type data: str
         :rtype: TreeNode
         """
-        vals = data.split('.')
-        if not vals:
-            return None
-
-        r = [TreeNode(None), 'l']
-        q = Queue.Queue()
-        q.put(r)
-
-        for val in vals:
-            curr = q.get()
-            parent, lr = curr
-            if val == 'None':
-                if lr == 'l':
-                    parent.left = None
-                else:
-                    parent.right = None
+        tokens = []
+        for ch in data.split(','):
+            if ch == '#':
+                tokens.append(None)
             else:
-                node = TreeNode(val)
-                if lr == 'l':
-                    parent.left = node
-                else:
-                    parent.right = node
-                q.put([node, 'l'])
-                q.put([node, 'r'])
+                tokens.append(int(ch))
 
-        return r[0].left
+        def _deserialize(idx):
+            if tokens[idx] is None:
+                return None, idx+1
 
-# Your Codec object will be instantiated and called as such:
-# codec = Codec()
-# codec.deserialize(codec.serialize(root))
+            node = TreeNode(tokens[idx])
+            node.left, idx = _deserialize(idx+1)
+            node.right, idx = _deserialize(idx)
+            return node, idx
+
+        return _deserialize(0)[0]
+
+
+def same_tree(t1, t2):
+    if t1 is None or t2 is None:
+        return t1 is None and t2 is None
+    if t1.val != t2.val:
+        return False
+    return same_tree(t1.left, t2.left) and same_tree(t1.right, t2.right)
+
+s = Codec()
+
+node = TreeNode(1)
+node.left = TreeNode(2)
+node.right = TreeNode(3)
+node.right.left = TreeNode(4)
+node.right.right = TreeNode(5)
+
+data = [
+    node,
+    None,
+]
+
+for d in data:
+    print(s.serialize(d))
+    assert same_tree(s.deserialize(s.serialize(d)), d)

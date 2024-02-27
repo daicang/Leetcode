@@ -1,47 +1,38 @@
-class Solution(object):
-    def minWindow(self, s, t):
-        """
-        :type s: str
-        :type t: str
-        :rtype: str
-        """
-        from collections import defaultdict
-        target = defaultdict(int)
-        for ch in t:
-            target[ch] += 1
 
-        def contain_all(d):
-            for val in d.values():
-                if val > 0:
-                    return False
-            return True
+from collections import Counter
 
-        window_size = None
-        min_window = None
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        left = 0
+        counter = Counter(t)
+        counter_s = {k: 0 for k in counter.keys()}
+        avail = 0
+        window = None
 
-        l = r = 0
-        last_l = 0
-        for r, rval in enumerate(s):
-            if rval not in target:
+        for i, ch in enumerate(s):
+            if ch not in counter:
                 continue
-            target[rval] -= 1
-            if contain_all(target):
-                # print 'r=%s' % r
-                # strip left
-                l = last_l
-                while s[l] not in target or target[s[l]] != 0:
-                    if s[l] in target:
-                        assert target[s[l]] < 0
-                        target[s[l]] += 1
-                    l += 1
-                last_l = l
-                # print 'l=%s, %s' % (l, s[l:r+1])
-                if window_size is None or (r-l+1) < window_size:
-                    window_size = r - l + 1
-                    min_window = s[l:r+1]
-                    # print 'window=%s' % s[l:r+1]
+            counter_s[ch] += 1
+            if counter_s[ch] == counter[ch]:
+                avail += 1
 
-        return min_window or ''
+            if avail == len(counter):
+                # increase left
+                for l in range(left, i+1):
+                    ch = s[l]
+                    if ch not in counter:
+                        continue
+                    if counter_s[ch] > counter[ch]:
+                        counter_s[ch] -= 1
+                    else:
+                        left = l
+                        break
+
+                if window is None or i-left+1 < len(window):
+                    window = s[left:i+1]
+
+        return '' if window is None else window
+
 
 s = Solution()
 
@@ -50,4 +41,4 @@ inputs = [
 ]
 
 for i in inputs:
-    print s.minWindow(*i)
+    print(s.minWindow(*i))
