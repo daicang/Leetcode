@@ -2,26 +2,32 @@ from typing import List
 
 class Solution:
     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-        dep_map = []
+        graph = []
         for i in range(numCourses):
-            dep_map.append([])
+            graph.append([])
 
+        for course, dependency in prerequisites:
+            graph[course].append(dependency)
 
-        for req in prerequisites:
-            curr, dep = req[0], req[1]
-            dep_map[curr].append(dep)
+        visited = [False] * numCourses
+        path = [False] * numCourses
 
-        for i in range(numCourses):
-            checked = [False] * numCourses
-            pres = dep_map[i]
-            while pres:
-                curr = pres.pop()
-                if curr == i:
+        def traverse(i):
+            if path[i]:
+                return False
+            if visited[i]:
+                return True
+            visited[i] = True
+            path[i] = True
+            for dep in graph[i]:
+                if traverse(dep) is False:
                     return False
-                if checked[curr]:
-                    continue
-                checked[curr] = True
-                pres.extend(dep_map[curr])
+            path[i] = False
+            return True
+
+        for i in range(numCourses):
+            if traverse(i) is False:
+                return False
 
         return True
 
