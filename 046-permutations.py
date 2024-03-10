@@ -1,21 +1,23 @@
-class Solution(object):
-    def permute(self, nums):
-        """
-        :type nums: List[int]
-        :rtype: List[List[int]]
-        """
 
-        permutations = []
-        def backtrack(first):
-            # In-place backtracking
-            if first == len(nums)-1:
-                permutations.append(nums[:])
+from typing import List
+
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        results = []
+        used = [False] * len(nums)
+
+        def traverse(path):
+            if len(path) == len(nums):
+                results.append(path[:])
                 return
+            for i, n in enumerate(nums):
+                if used[i]:
+                    continue
+                used[i] = True
+                path.append(n)
+                traverse(path)
+                path.pop()
+                used[i] = False
 
-            for i in range(first, len(nums)):
-                nums[i], nums[first] = nums[first], nums[i]
-                backtrack(first+1)
-                nums[first], nums[i] = nums[i], nums[first]
-
-        backtrack(0)
-        return permutations
+        traverse([])
+        return results
