@@ -1,45 +1,30 @@
-class RandomizedSet(object):
+
+import random
+class RandomizedSet:
 
     def __init__(self):
-        """
-        Initialize your data structure here.
-        """
-        self.d = {}
-        self.dsize = 0
-        
+        self.index = {}
+        self.arr = []
 
-    def insert(self, val):
-        """
-        Inserts a value to the set. Returns true if the set did not already contain the specified element.
-        :type val: int
-        :rtype: bool
-        """
-        if val in self.d.keys():
+    def insert(self, val: int) -> bool:
+        if val in self.index:
             return False
-        self.d[val] = 1
-        self.dsize += 1
+        self.arr.append(val)
+        self.index[val] = len(self.arr)-1
         return True
-        
 
-    def remove(self, val):
-        """
-        Removes a value from the set. Returns true if the set contained the specified element.
-        :type val: int
-        :rtype: bool
-        """
-        if val in self.d.keys():
-            del self.d[val]
-            self.dsize -= 1
-            return True
-        return False
+    def remove(self, val: int) -> bool:
+        if val not in self.index:
+            return False
+        i = self.index[val]
+        self.index[self.arr[-1]] = i
+        self.arr[-1], self.arr[i] = self.arr[i], self.arr[-1]
+        self.arr.pop()
+        del self.index[val]
+        return True
 
-    def getRandom(self):
-        """
-        Get a random element from the set.
-        :rtype: int
-        """
-        idx = random.randint(0, self.dsize-1)
-        return self.d.keys()[idx]
+    def getRandom(self) -> int:
+        return random.choice(self.arr)
 
 
 # Your RandomizedSet object will be instantiated and called as such:
