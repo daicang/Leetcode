@@ -1,39 +1,31 @@
-class Solution(object):
-    def maxProfit(self, k, prices):
-        """
-        :type k: int
-        :type prices: List[int]
-        :rtype: int
-        """
-        # TLE
+from typing import List
 
-        if len(prices) < 2 or k == 0:
-            return 0
+class Solution:
+    def maxProfit(self, k: int, prices: List[int]) -> int:
+        # profit by selling k times
+        # suppose no earning by selling k times initially
+        sells = [0] * (k+1)
 
-        def all_profit():
-            last = None
-            profit = 0
-            for p in prices:
-                if last is not None and p > last:
-                    profit += p - last
-                last = p
-            return profit
-
-        if p >= len(prices)-1:
-            return all_profit()
-
-        import sys
-        buys = [-sys.maxint] * k
-        sells = [0] * k
+        # profit by buying k times
+        buys = [-1000] * (k+1)
 
         for p in prices:
-            for i in range(k-1, -1, -1):
+            for i in range(k, 0, -1):
+                # sell at this moment, gain p with buys[i]
                 sells[i] = max(sells[i], buys[i]+p)
-                if i == 0:
-                    last_sell = 0
-                else:
-                    last_sell = sells[i-1]
-                buys[i] = max(buys[i], last_sell-p)
+
+                # buy at this moment, lose p with sells[i-1]
+                buys[i] = max(buys[i], sells[i-1]-p)
 
         return sells[-1]
 
+data = [
+    [2, [2,4,1]],  # 2
+    [3, [3,2,6,5,0,3]],  # 7
+    [1, [1,2,3,4,5]], # 4
+]
+
+s = Solution()
+
+for d in data:
+    print(s.maxProfit(*d))

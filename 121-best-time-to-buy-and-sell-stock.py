@@ -1,11 +1,24 @@
-class Solution(object):
-    def maxProfit(self, prices):
-        """
-        :type prices: List[int]
-        :rtype: int
-        """
+
+from typing import List
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        # monotonic stack
+        stack = []
+        max_profit = 0
+
+        for p in prices:
+            while stack and stack[-1] >= p:
+                stack.pop()
+            stack.append(p)
+            max_profit = max(max_profit, p-stack[0])
+
+        return max_profit
+
+    def maxProfit(self, prices: List[int]) -> int:
         if len(prices) < 2:
             return 0
+
         size = len(prices)
         min_before = [prices[0]] * size
         max_after = [prices[-1]] * size
@@ -22,3 +35,14 @@ class Solution(object):
             maxp = max(maxp, max_after[i]-min_before[i])
 
         return maxp
+
+
+s = Solution()
+
+data = [
+    [7,1,5,3,6,4], # 5
+    [7,6,4,3,1], # 0
+]
+
+for d in data:
+    print(s.maxProfit(d))

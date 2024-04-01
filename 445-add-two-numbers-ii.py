@@ -1,3 +1,4 @@
+
 # Definition for singly-linked list.
 class ListNode:
     def __init__(self, val=0, next=None):
@@ -6,13 +7,20 @@ class ListNode:
 
 class Solution:
     def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
-        if not l1:
-            return l2
-        if not l2:
-            return l1
 
+        def reverse_ll(node):
+            if not node.next:
+                return node
+            new_head = reverse_ll(node.next)
+            # reverse next element
+            node.next.next = node
+            # remove loop
+            node.next = None
+            return new_head
+
+        l1 = reverse_ll(l1)
+        l2 = reverse_ll(l2)
         carry = 0
-
         phead = ListNode()
         prev_node = phead
 
@@ -35,4 +43,4 @@ class Solution:
             prev_node.next = ListNode(value)
             prev_node = prev_node.next
 
-        return phead.next
+        return reverse_ll(phead.next)

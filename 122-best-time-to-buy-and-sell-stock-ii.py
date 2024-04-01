@@ -1,17 +1,13 @@
-class Solution(object):
-    def maxProfit(self, prices):
-        """
-        :type prices: List[int]
-        :rtype: int
-        """
+
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        if len(prices) < 2:
+            return 0
+        prev = prices[0]
         profit = 0
-
-        for i, val in enumerate(prices):
-            if i == 0:
-                last = val
-                continue
-            if val > last:
-                profit += val-last
-            last = val
-
+        for p in prices:
+            if p > prev:
+                profit += p-prev
+            prev = p
         return profit

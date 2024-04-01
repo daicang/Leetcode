@@ -1,44 +1,53 @@
-class Solution(object):
-    def spiralOrder(self, matrix):
-        """
-        :type matrix: List[List[int]]
-        :rtype: List[int]
-        """
 
-        def circle(row_begin, row_end, col_begin, col_end):
-            if row_begin == row_end:
-                for col in range(col_begin, col_end+1):
-                    yield matrix[row_begin][col]
-            elif col_begin == col_end:
-                for row in range(row_begin, row_end+1):
-                    yield matrix[row][col_begin]
-            else:
-                for col in range(col_begin, col_end):
-                    yield matrix[row_begin][col]
-                col += 1
-                for row in range(row_begin, row_end):
-                    yield matrix[row][col]
-                row += 1
-                for col in range(col_end, col_begin, -1):
-                    yield matrix[row][col]
-                col -= 1
-                for row in range(row_end, row_begin, -1):
-                    yield matrix[row][col]
+from typing import List
 
-        if not matrix:
-            return []
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]:
+            return
 
-        spiral = []
-        row_begin = col_begin = 0
-        row_end = len(matrix)-1
-        col_end = len(matrix[0])-1
+        rows = len(matrix)
+        cols = len(matrix[0])
+        ret = []
 
-        while row_begin <= row_end and col_begin <= col_end:
-            for elem in circle(row_begin, row_end, col_begin, col_end):
-                spiral.append(elem)
-            row_begin += 1
-            row_end -= 1
-            col_begin += 1
-            col_end -= 1
+        upper = 0
+        lower = rows-1
+        left = 0
+        right = cols-1
 
-        return spiral
+        while len(ret) < rows * cols:
+            # 1. Must loop full of first line,
+            # Otherwise cannot handle last line/column
+            # 2. Must check and update boundry on each iteration
+            if upper <= lower:
+                for i in range(left, right+1):
+                    ret.append(matrix[upper][i])
+                upper = upper + 1
+
+            if left <= right:
+                for i in range(upper, lower+1):
+                    ret.append(matrix[i][right])
+                right = right - 1
+
+            if upper <= lower:
+                for i in range(right, left-1, -1):
+                    ret.append(matrix[lower][i])
+                lower = lower - 1
+
+            if left <= right:
+                for i in range(lower, upper-1, -1):
+                    ret.append(matrix[i][left])
+                left = left + 1
+
+        return ret
+
+
+s = Solution()
+
+data = [
+    [[1,2,3],[4,5,6],[7,8,9]],
+    [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+]
+
+for d in data:
+    print(s.spiralOrder(d))

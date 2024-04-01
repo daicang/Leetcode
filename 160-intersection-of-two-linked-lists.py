@@ -5,41 +5,29 @@ class ListNode:
         self.next = None
 
 class Solution:
-    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
-        if not headA or not headB:
-            return None
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+        p1 = headA
+        p2 = headB
+        change_p1 = change_p2 = False
 
-        node_a = headA
-        node_b = headB
-        count_a = count_b = 0
-        while True:
-            count_a += 1
-            if not node_a.next:
+        while p1 and p2:
+            if p1 == p2:
+                return p1
+
+            if p1.next:
+                p1 = p1.next
+            elif change_p1 is False:
+                p1 = headB
+                change_p1 = True
+            else:
                 break
-            node_a = node_a.next
 
-        while True:
-            count_b += 1
-            if not node_b.next:
+            if p2.next:
+                p2 = p2.next
+            elif change_p2 is False:
+                p2 = headA
+                change_p2 = True
+            else:
                 break
-            node_b = node_b.next
 
-        if node_a != node_b:
-            return None
-
-        node_a = headA
-        node_b = headB
-        if count_a < count_b:
-            while count_b > count_a:
-                count_b -= 1
-                node_b = node_b.next
-        else:
-            while count_a > count_b:
-                count_a -= 1
-                node_a = node_a.next
-
-        while True:
-            if node_a == node_b:
-                return node_a
-            node_a = node_a.next
-            node_b = node_b.next
+        return None

@@ -1,15 +1,10 @@
-class Solution(object):
-    def maxProfit(self, prices):
-        """
-        :type prices: List[int]
-        :rtype: int
-        """
-        if not prices:
-            return 0
 
-        import sys
+from typing import List
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        buy1 = buy2 = -100000
         sell1 = sell2 = 0
-        buy1 = buy2 = -sys.maxint
 
         for p in prices:
             sell2 = max(sell2, p+buy2)
@@ -23,9 +18,10 @@ class Solution(object):
 s = Solution()
 
 inputs = [
+    [1,2,3,4,5],
     [3,3,5,0,0,3,1,4],
     [1,2,3,4,5]
 ]
 
 for i in inputs:
-    print s.maxProfit(i)
+    print(s.maxProfit(i))

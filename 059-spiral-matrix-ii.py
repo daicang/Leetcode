@@ -1,35 +1,36 @@
-class Solution(object):
-    def generateMatrix(self, n):
-        """
-        :type n: int
-        :rtype: List[List[int]]
-        """
-        array = []
+from typing import List
+
+class Solution:
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        arr = []
         for _ in range(n):
-            array.append([None] * n)
+            arr.append([None] * n)
 
         start = 0
         end = n-1
-        i = 1
+        val = 1
 
         while start < end:
-            for col in range(start, end):
-                array[start][col] = i
-                i += 1
-            for row in range(start, end):
-                array[row][end] = i
-                i += 1
-            for col in range(end, start, -1):
-                array[end][col] = i
-                i += 1
-            for row in range(end, start, -1):
-                array[row][start] = i
-                i += 1
+            for i in range(start, end+1):
+                arr[start][i] = val
+                val += 1
+
+            for i in range(start+1, end+1):
+                arr[i][end] = val
+                val += 1
+
+            for i in range(end-1, start-1, -1):
+                arr[end][i] = val
+                val += 1
+
+            for i in range(end-1, start, -1):
+                arr[i][start] = val
+                val += 1
 
             start += 1
             end -= 1
 
         if start == end:
-            array[start][start] = i
+            arr[start][end] = val
 
-        return array
+        return arr

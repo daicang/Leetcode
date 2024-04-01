@@ -1,49 +1,47 @@
+
 # Definition for singly-linked list.
-class ListNode(object):
-    def __init__(self, x):
-        self.val = x
-        self.next = None
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
 
-class Solution(object):
-    def reverseKGroup(self, head, k):
-        """
-        :type head: ListNode
-        :type k: int
-        :rtype: ListNode
-        """
-        if not head:
-            return None
+class Solution:
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
 
-        # start->n1->..->prev_end->end
-        # Reverse [n1, .. end] to start->end->..->n1
-        h = ListNode(0)
-        h.next = head
-        start = end = h
+        def reverse(left_b, right_b):
+            # left_b -> n1 .. -> nn -> right_b
+            # left_b -> n1 .. <- nn -> right_b
+            # left_b -> nn .. -> n1 -> right_b
+            prev = left_b
+            curr = left_b.next
 
-        while True:
-            for i in range(k):
-                end = end.next
-                if not end:
-                    return h.next
-                if i == 0:
-                    n1 = end
-                if i == k-2:
-                    prev_end = end
+            while curr != right_b:
+                next_node = curr.next
+                curr.next = prev
+                prev = curr
+                curr = next_node
 
-            while start.next != end:
-                # start->end->n1->..->prev_end
-                start.next = end
-                prev_end.next = end.next
-                end.next = n1
+            left_b.next.next = right_b
+            left_b.next = prev
 
-                start = end
-                end = prev_end
+        count = 0
+        phead = ListNode()
+        phead.next = head
+        curr_node = head
+        left_b = phead
 
-                # Find new node prev to end
-                prev_end = start
-                while prev_end.next != end:
-                    prev_end = prev_end.next
+        while curr_node:
+            count += 1
+            next_node = curr_node.next
+            if count == k:
+                # reset counter
+                count = 0
+                # new left boundry is n1
+                new_left_b = left_b.next
+                # reverse n1 .. nn
+                reverse(left_b, curr_node.next)
+                left_b = new_left_b
 
-            start = end = n1
+            curr_node = next_node
 
-
+        return phead.next

@@ -1,31 +1,28 @@
 # Definition for singly-linked list.
-class ListNode(object):
-    def __init__(self, x):
-        self.val = x
-        self.next = None
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
 
-class Solution(object):
-    def mergeKLists(self, lists):
-        """
-        :type lists: List[ListNode]
-        :rtype: ListNode
-        """
-        head = ListNode(0)
-        curr = head
-        currs = [h for h in lists if h is not None]
+import heapq
 
-        while currs:
-            min_i = 0
-            for i, p in enumerate(currs):
-                if p.val < currs[min_i].val:
-                    min_i = i
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        head = ListNode()
+        p = head
+        h = []
 
-            curr.next = currs[min_i]
-            curr = curr.next
+        for i, l in enumerate(lists):
+            if l:
+                heapq.heappush(h, (l.val, i, l))
 
-            if currs[min_i].next:
-                currs[min_i] = currs[min_i].next
-            else:
-                currs.remove(currs[min_i])
+        while h:
+            _, i, node = heapq.heappop(h)
+            p.next = node
+            p = p.next
+            if node.next:
+                heapq.heappush(h, (node.next.val, i, node.next))
+
+        p.next = None
 
         return head.next
