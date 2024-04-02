@@ -28,45 +28,6 @@ class Codec:
 
         return ','.join(arr)
 
-    def serialize(self, root):
-        arr = []
-        level = [root]
-
-        while level:
-            next_level = []
-            for node in level:
-                if node is None:
-                    arr.append('#')
-                else:
-                    arr.append(node.val)
-                    next_level.append(node.left)
-                    next_level.append(node.right)
-            level = next_level
-
-        return arr
-
-    def deserialize(self, arr):
-        root = None
-
-        def get_node(val):
-            if val == '#':
-                return None
-            return TreeNode(val)
-
-        upper_level = []
-
-        for i, val in enumerate(arr):
-            if i == 0:
-                root = get_node(val)
-                if root:
-                    upper_level.append(root)
-            else:
-                node = get_node(val)
-
-
-
-
-
     def deserialize_preorder(self, data):
         """Decodes your encoded data to tree.
 

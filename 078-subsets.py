@@ -1,24 +1,19 @@
-class Solution(object):
-    def subsets(self, nums):
-        """
-        :type nums: List[int]
-        :rtype: List[List[int]]
-        """
-        from copy import copy
-        subs = []
 
-        def backtrack(i, l):
+from typing import List
+
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        subsets = []
+
+        def traverse(path, i):
             if i == len(nums):
-                subs.append(copy(l))
-                return
-            backtrack(i+1, l)
-            l.append(nums[i])
-            backtrack(i+1, l)
-            l.pop()
+                subsets.append(path[:])
 
-        backtrack(0, [])
-        return subs
+            traverse(path, i+1)
+            path.append(nums[i])
+            traverse(path, i+1)
+            path.pop()
 
-s = Solution()
+        traverse([], 0)
 
-print s.subsets([1,2,3])
+        return subsets
