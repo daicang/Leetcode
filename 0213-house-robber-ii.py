@@ -2,31 +2,22 @@ from typing import List
 
 class Solution:
     def rob(self, nums: List[int]) -> int:
-        if len(nums) <= 3:
+        if len(nums) < 3:
             return max(nums)
 
-        def dp(take):
-            dp = [0] * len(nums)
-            for i, val in enumerate(nums):
-                if i == take:
-                    dp[i] = val
-                elif abs(i-take) == 1:
-                    dp[i] = 0
-                elif take == 0 and i == len(nums)-1:
-                    dp[i] = 0
-                else:
-                    c1 = c2 = 0
-                    if i >= 2:
-                        c1 = dp[i-2]
-                    if i >= 3:
-                        c2 = dp[i-3]
-                    dp[i] = val + max(c1, c2)
-            # print(dp)
-            return max(dp)
+        def rob_range(begin, end):
+            rob_value = nums[begin]
+            norob_value = 0
+            for i in range(begin+1, end+1):
+                new_rob_value = nums[i] + norob_value
+                new_norob_value = max(rob_value, norob_value)
 
-        # Must take 1 in every 3 consecutive elements
+                rob_value = new_rob_value
+                norob_value = new_norob_value
 
-        return max(dp(0), dp(1), dp(2))
+            return max(rob_value, norob_value)
+
+        return max(rob_range(0, len(nums)-2), rob_range(1, len(nums)-1))
 
 
 s = Solution()

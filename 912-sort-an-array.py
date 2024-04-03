@@ -1,100 +1,70 @@
-
-
 from typing import List
 
 class Solution:
-    def sortArray(self, nums: List[int]) -> List[int]:
-        # quicksort, TLE
-        def _sort(lo, hi):
-            if lo >= hi:
-                return
-
-            pivot = nums[lo]
-            first_ge_idx = lo
-
-            for i in range(lo+1, hi+1):
-                if nums[i] < pivot:
-                    # switch with arr[first_ge_idx]
-                    first_ge_idx += 1
-                    nums[i], nums[first_ge_idx] = nums[first_ge_idx], nums[i]
-
-            nums[lo], nums[first_ge_idx] = nums[first_ge_idx], nums[lo]
-
-            _sort(lo, first_ge_idx-1)
-            _sort(first_ge_idx+1, hi)
-
-        _sort(0, len(nums)-1)
-        return nums
-
-
-    def sortArray_merge(self, nums: List[int]) -> List[int]:
-        def _sort(lo, hi):
-            # normal merge sort, O(n) extra space, AC
-            if hi <= lo:
-                return
-
-            mid = (lo+hi) // 2
-            _sort(lo, mid)
-            _sort(mid+1, hi)
-
-            arr1 = nums[lo:mid+1]
-            arr2 = nums[mid+1:hi+1]
-
-            i = lo
-            p1 = 0
-            p2 = 0
-            l1 = len(arr1)
-            l2 = len(arr2)
-
-            while p1 < l1 and p2 < l2:
-                if arr1[p1] < arr2[p2]:
-                    nums[i] = arr1[p1]
-                    p1 += 1
-                else:
-                    nums[i] = arr2[p2]
-                    p2 += 1
-                i += 1
-
-            for j in range(p1, l1):
-                nums[i] = arr1[j]
-                i += 1
-            for j in range(p2, l2):
-                nums[i] = arr2[j]
-                i += 1
-
-
-        def _sort_in_place(lo, hi):
-            # in-place merge sort, TLE
-            if hi <= lo:
-                return
-
-            mid = (hi + lo) // 2
-            _sort(lo, mid)
-            _sort(mid+1, hi)
-
-            # merge
-            p1 = lo
-            p2 = mid+1
-
-            while p1 <= mid and p2 <= hi:
-                if nums[p1] <= nums[p2]:
-                    p1 += 1
-                else:
-                    # put n[p2] in n[p1], shifting elements[p1,p2] to righy by 1
-                    val = nums[p2]
-                    for i in range(p2, p1, -1):
-                        nums[i] = nums[i-1]
-                    nums[p1] = val
-
-                    p1 += 1
-                    mid += 1
-                    p2 += 1
-
+    def quicksort(self, nums, lower, upper):
+        if lower >= upper:
             return
 
-        _sort(0, len(nums)-1)
+        # tweak to fix TLE
+        mid = (lower + upper) // 2
+        nums[mid], nums[upper] = nums[upper], nums[mid]
 
+        def partition(lower, upper):
+            pivot = nums[upper]
+            i = lower
+            # .. [i=first greater] .. [j=to compare] .. [last=pivot]
+            # .. [i=pivot] .. [all greater]
+            # return i
+            for j in range(i, upper):
+                if nums[j] < pivot:
+                    # if current < pivot, move to pos i(switch) and incr i
+                    nums[i], nums[j] = nums[j], nums[i]
+                    i += 1
+            nums[i], nums[upper] = nums[upper], nums[i]
+            return i
+
+        i = partition(lower, upper)
+        self.quicksort(nums, lower, i-1)
+        self.quicksort(nums, i+1, upper)
+
+    def mergesort(self, nums, lower, upper):
+        if upper <= lower:
+            return
+
+        mid = (lower+upper) // 2
+        self.mergesort(nums, lower, mid)
+        self.mergesort(nums, mid+1, upper)
+
+        arr1 = nums[lower:mid+1]
+        arr2 = nums[mid+1:upper+1]
+        i1 = i2 = 0
+        i = lower
+
+        # copy and merge
+        while i1 < len(arr1) and i2 < len(arr2):
+            if arr1[i1] < arr2[i2]:
+                nums[i] = arr1[i1]
+                i1 += 1
+            else:
+                nums[i] = arr2[i2]
+                i2 += 1
+            i += 1
+
+        while i1 < len(arr1):
+            nums[i] = arr1[i1]
+            i1 += 1
+            i += 1
+
+        while i2 < len(arr2):
+            nums[i] = arr2[i2]
+            i2 += 1
+            i += 1
+
+    def sortArray(self, nums: List[int]) -> List[int]:
+        # self.quicksort(nums, 0, len(nums)-1)
+        self.mergesort(nums, 0, len(nums)-1)
         return nums
+
 
 
 s = Solution()

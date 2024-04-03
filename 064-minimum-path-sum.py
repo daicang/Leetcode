@@ -1,31 +1,25 @@
-class Solution(object):
-    def minPathSum(self, grid):
-        """
-        :type grid: List[List[int]]
-        :rtype: int
-        """
+
+from typing import List
+from functools import cache
+
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
         if not grid or not grid[0]:
             return 0
-        m = len(grid)
-        n = len(grid[0])
 
-        dp = []
-        for _ in range(m):
-            dp.append([None] * (n))
-
-        dp[m-1][n-1] = grid[m-1][n-1]
-
+        @cache
         def solve(row, col):
-            if dp[row][col] is not None:
-                return dp[row][col]
-            if row == m-1:
-                cost = grid[row][col] + solve(row, col+1)
-            elif col == n-1:
-                cost = grid[row][col] + solve(row+1, col)
-            else:
-                cost = grid[row][col] + min(solve(row, col+1), solve(row+1, col))
-            dp[row][col] = cost
-            # print 'dp(%s,%s) is %s' % (row, col, ans)
-            return cost
+            val = grid[row][col]
+            if row == 0 and col == 0:
+                return val
+            if row == 0:
+                return val + solve(row, col-1)
+            if col == 0:
+                return val + solve(row-1, col)
 
-        return solve(0, 0)
+            return val + min(solve(row-1, col), solve(row, col-1))
+
+        rows = len(grid)
+        cols = len(grid[0])
+
+        return solve(rows-1, cols-1)

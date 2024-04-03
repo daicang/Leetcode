@@ -1,33 +1,36 @@
 from typing import List
-import heapq
+
 
 class Solution:
     def findKthLargest(self, nums: List[int], k: int) -> int:
-        # return heapq.nlargest(k, nums)[-1]
+        def find(lower, upper, k):
+            # find smallest element at index k (element is (k+1)th smallest)
+            pivot = nums[upper]
+            i = lower
+            # optimize: count same element as pivot
+            pivot_counter = 0
+            for j in range(lower, upper):
+                if nums[j] < pivot:
+                    nums[i], nums[j] = nums[j], nums[i]
+                    i += 1
+                elif nums[j] == pivot:
+                    pivot_counter += 1
+            nums[i], nums[upper] = nums[upper], nums[i]
 
-        pivot_idx = 0
-        pivot = nums[pivot_idx]
-        ri = len(nums)-1
+            if i <= k <= i+pivot_counter:
+                return pivot
+            if i > k:
+                return find(lower, i-1, k)
+            else:
+                # the index remains the same
+                return find(i+1, upper, k)
 
-        while pivot_idx < ri:
-            val = nums[ri]
-            if val > pivot:
-                ri -= 1
-                continue
-            pivot_idx += 1
-            nums[ri] = nums[pivot_idx]
-            nums[pivot_idx] = pivot
-            nums[pivot_idx-1] = val
+        # kth largest elem has n-k elem smaller
+        # so it is (n-k+1)th smallest, indexed at n-k
+        return find(0, len(nums)-1, len(nums)-k)
 
-        pivot_rank = len(nums) - pivot_idx
-        if pivot_rank == k:
-            return nums[pivot_idx]
-
-        if pivot_rank > k:
-            return self.findKthLargest(nums[pivot_idx+1:], k)
-
-        return self.findKthLargest(nums[:pivot_idx], k-pivot_rank)
-
+# time: O(N) - O(N^2)
+# space: O(1)
 
 s = Solution()
 

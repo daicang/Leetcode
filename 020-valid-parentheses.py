@@ -1,28 +1,17 @@
-class Solution(object):
-    def isValid(self, s):
-        """
-        :type s: str
-        :rtype: bool
-        """
+
+class Solution:
+    def isValid(self, s: str) -> bool:
         stack = []
-        expects = {
+        parens = {
             '(': ')',
             '{': '}',
-            '[': ']'
+            '[': ']',
         }
-
         for ch in s:
-            if ch in expects:
-                stack.append(expects[ch])
+            if ch in parens:
+                stack.append(parens[ch])
             else:
-                if len(stack) == 0:
+                if not stack or stack.pop() != ch:
                     return False
-                expected = stack.pop()
-                if ch != expected:
-                    return False
-        return len(stack) == 0
 
-
-
-s = Solution()
-print(s.isValid("([)]"))
+        return True
