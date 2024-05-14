@@ -1,53 +1,30 @@
 import random
+
 # Definition for singly-linked list.
-# class ListNode(object):
-#     def __init__(self, x):
-#         self.val = x
-#         self.next = None
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
 
-
-class Solution(object):
-    _largesize = 300
-
-    def __init__(self, head):
+    def __init__(self, head: Optional[ListNode]):
         self.head = head
-        self.lsize = 0
-        while head.next:
-            head = head.next
-            self.lsize += 1
 
-        self.m1_idx = None
-        self.m2_idx = None
-        if self.lsize > self._largesize:
-            self.m1_idx = self.lsize / 3   # start from 1/3
-            self.m1 = self._getN(self.m1_idx)
-            self.m2_idx = self.m1_idx * 2  # start from 2/3
-            self.m2 = self._getN(self.m2_idx)
+    def getRandom(self) -> int:
+        # Reservoir sampling
+        ret = self.head
+        node = self.head
+        i = 1
+        while node.next:
+            i += 1
+            node = node.next
+            # Take 1/i chance to keep node i
+            if random.randint(0, i-1) == 0:
+                ret = node
+        return ret
 
-    def _getN(self, n):
-        n -= 1
-        p = self.head
-        while n:
-            p = p.next
-            n -= 1
-        return p
 
-    def getRandom(self):
-        def _get(delta, start):
-            p = start
-            while delta:
-                p = p.next
-                delta -= 1
-            return p.val
 
-        nextpos = random.randint(0, self.lsize)
-        if not self.m1_idx:
-            return _get(nextpos, self.head)
-
-        if nextpos < self.m1_idx:
-            val = _get(nextpos, self.head)
-        elif nextpos < self.m2_idx:
-            val = _get(nextpos - self.m1_idx, self.m1)
-        else:
-            val = _get(nextpos - self.m2_idx, self.m2)
-        return val
+# Your Solution object will be instantiated and called as such:
+# obj = Solution(head)
+# param_1 = obj.getRandom()

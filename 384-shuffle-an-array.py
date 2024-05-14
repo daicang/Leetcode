@@ -1,31 +1,27 @@
 # Fisher-Yates shuffle
-import random
+
+from typing import List
+
+class Solution:
+
+    def __init__(self, nums: List[int]):
+        self.nums = nums
+        self.arr = nums[:]
+        self.n = len(nums)
+
+    def reset(self) -> List[int]:
+        return self.nums
 
 
-class Solution(object):
-
-    def __init__(self, nums):
-        """
-        :type nums: List[int]
-        :type size: int
-        """
-        self.orig = nums
-        self.shuf = [x for x in nums]
-
-    def reset(self):
-        """
-        Resets the array to its original configuration and return it.
-        :rtype: List[int]
-        """
-        return self.orig
-
-    def shuffle(self):
-        """
-        Returns a random shuffling of the array.
-        :rtype: List[int]
-        """
-        for i in xrange(len(self.shuf)):
+    def shuffle(self) -> List[int]:
+        for i in range(self.n):
             j = random.randint(0, i)
-            self.shuf[i], self.shuf[j] = self.shuf[j], self.shuf[i]
+            self.arr[i], self.arr[j] = self.arr[j], self.arr[i]
+        return self.arr
 
-        return self.shuf
+
+
+# Your Solution object will be instantiated and called as such:
+# obj = Solution(nums)
+# param_1 = obj.reset()
+# param_2 = obj.shuffle()

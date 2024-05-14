@@ -1,25 +1,22 @@
 import random
+from collections import defaultdict
 
+class Solution:
 
-class Solution(object):
+    def __init__(self, nums: List[int]):
+        self.index = defaultdict(list)
+        for i, n in enumerate(nums):
+            self.index[n].append(i)
 
-    def __init__(self, nums):
-        """
-        :type nums: List[int]
-        :type numsSize: int
-        """
-        self.nums = nums
+    def pick(self, target: int) -> int:
+        return random.choice(self.index[target])
 
-    def pick(self, target):
-        """
-        :type target: int
-        :rtype: int
-        """
-        return random.choice([idx for idx, val in enumerate(self.nums)
-                              if val == target])
-
-s = Solution()
-
-# Your Solution object will be instantiated and called as such:
-# obj = Solution(nums)
-# param_1 = obj.pick(target)
+        # Reservoir sampling
+        # ret = -1
+        # count = 0
+        # for i, n in enumerate(self.nums):
+        #     if n == target:
+        #         count += 1
+        #         if random.random() < 1/count:
+        #             ret = i
+        # return ret
