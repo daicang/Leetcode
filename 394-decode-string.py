@@ -1,42 +1,97 @@
-class Solution(object):
-    def decodeString(self, s):
-        """
-        :type s: str
-        :rtype: str
-        """
-        def _find_digit(s):
-            for i, ch in enumerate(s):
-                if ch.isdigit():
-                    return i
-            return False
 
-        def _find_right_paren(s):
-            counter = 0
-            for i, ch in enumerate(s):
-                if ch == '[':
-                    counter += 1
-                if ch == ']':
-                    counter -= 1
-                    if counter == 0:
-                        return i
-            return False
+class Token:
 
-        def _parse(s):
-            if not s:
-                return ''
-            if s[0].isalpha():
-                next = _find_digit(s)
-                if next:
-                    return s[:next] + _parse(s[next:])
-                return s
+    lparen = '['
+    rparen = ']'
+    num = 'num'
+    string = 'string'
+
+    def __init__(self, val):
+        self.type = 'unknown'
+        self.val = val
+
+        if val == '[':
+            self.type = self.lparen
+        elif val == ']':
+            self.type = self.rparen
+        elif isinstance(val, int):
+            self.type = self.num
+        else:
+            self.type = self.string
+
+
+class Solution:
+
+    def lexer(self, s):
+        tokens = []
+        i = 0
+
+        while i < len(s):
+            if s[i].isdigit():
+                n = 0
+                while i < len(s) and s[i].isdigit():
+                    n *= 10
+                    n += int(s[i])
+                    i += 1
+                tokens.append(Token(n))
+            elif s[i] == '[':
+                tokens.append(Token('['))
+                i += 1
+            elif s[i] == ']':
+                tokens.append(Token(']'))
+                i += 1
             else:
-                left_paren = s.find('[')
-                right_paren = _find_right_paren(s)
-                num = int(s[:left_paren])
-                return num * _parse(s[left_paren+1:right_paren]) + _parse(s[right_paren+1:])
+                chs = []
+                while i < len(s) and 'a' <= s[i] <= 'z':
+                    chs.append(s[i])
+                    i += 1
+                tokens.append(Token(''.join(chs)))
 
-        return _parse(s)
+        return tokens
+
+    def parse_string(self, tokens) -> str:
+        # str := <num>[<str>] | <str><str>
+        if not tokens:
+            return ''
+
+        token = tokens.pop(0)
+        if token.type == Token.num:
+            n = token.val
+            assert tokens.pop(0).type == Token.lparen
+
+            counter = 0
+            content = []
+
+            while tokens:
+                token = tokens.pop(0)
+
+                if token.type == Token.lparen:
+                    counter += 1
+
+                elif token.type == Token.rparen:
+                    if counter == 0:
+                        break
+                    counter -= 1
+
+                content.append(token)
+
+            return n * self.parse_string(content) + self.parse_string(tokens)
+
+        else:
+            assert token.type == Token.string, token.type
+            return token.val + self.parse_string(tokens)
+
+
+    def decodeString(self, s: str) -> str:
+        tokens = self.lexer(s)
+        return self.parse_string(tokens)
+
 
 s = Solution()
-print s.decodeString('3[a2[c]]')
-print s.decodeString('2[a]3[c]4[b]5[d]')
+data = [
+    '3[a2[c]]',
+    '2[a]3[c]4[b]5[d]'
+]
+
+for d in data:
+    print(s.decodeString(d))

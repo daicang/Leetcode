@@ -1,49 +1,31 @@
-class Solution(object):
-    def search(self, nums, target):
-        """
-        :type nums: List[int]
-        :type target: int
-        :rtype: int
-        """
+from typing import List
 
-        def bisearch(start, end):
-            if start == end and target == nums[start]:
-                return start
-            if start >= end:
-                return -1
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        lo, hi = 0, len(nums)-1
 
-            half = (start+end) / 2
-            midpoint = nums[half]
+        while lo < hi:
+            mid = (lo+hi) // 2
 
-            if target == nums[start]:
-                return start
-            if target == nums[end]:
-                return end
-            if target == midpoint:
-                return half
+            if nums[lo] == target:
+                return lo
+            if nums[hi] == target:
+                return hi
+            if nums[mid] == target:
+                return mid
 
-            if midpoint >= nums[start]:
-                # First part is in ascending order
-                if target > nums[start] and target < midpoint:
-                    return bisearch(start+1, half-1)
+            if nums[lo] < nums[mid]:
+                if nums[lo] < target < nums[mid]:
+                    hi = mid
                 else:
-                    return bisearch(half+1, end-1)
-
+                    lo = mid + 1
             else:
-                # Second part is in ascending order
-                if target > midpoint and target < nums[end]:
-                    return bisearch(half+1, end-1)
+                if nums[mid] < target < nums[hi]:
+                    lo = mid + 1
                 else:
-                    return bisearch(start+1, half-1)
+                    hi = mid
 
-        return bisearch(0, len(nums)-1)
-
-
-s = Solution()
-
-inputs = [
-    ([4,5,6,7,0,1,2], 0),
-]
-
-for input in inputs:
-    print s.search(*input)
+        assert lo == hi
+        if nums[lo] == target:
+            return lo
+        return -1

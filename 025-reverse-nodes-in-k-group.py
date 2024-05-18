@@ -1,5 +1,6 @@
+from typing import Optional
 
-# Definition for singly-linked list.
+
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
@@ -7,41 +8,93 @@ class ListNode:
 
 class Solution:
     def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        if k < 2:
+            return head
 
-        def reverse(left_b, right_b):
-            # left_b -> n1 .. -> nn -> right_b
-            # left_b -> n1 .. <- nn -> right_b
-            # left_b -> nn .. -> n1 -> right_b
-            prev = left_b
-            curr = left_b.next
+        def reverse(begin, end):
+            # -> begin -> .. -> end ->
+            # -> end   -> .. -> begin ->
+            prev = begin
+            node = begin.next
 
-            while curr != right_b:
-                next_node = curr.next
-                curr.next = prev
-                prev = curr
-                curr = next_node
+            while node:
+                next_node = node.next
+                node.next = prev
+                if node == end:
+                    return
+                prev = node
+                node = next_node
 
-            left_b.next.next = right_b
-            left_b.next = prev
-
-        count = 0
+        counter = 0
         phead = ListNode()
         phead.next = head
-        curr_node = head
-        left_b = phead
 
-        while curr_node:
-            count += 1
-            next_node = curr_node.next
-            if count == k:
-                # reset counter
-                count = 0
-                # new left boundry is n1
-                new_left_b = left_b.next
-                # reverse n1 .. nn
-                reverse(left_b, curr_node.next)
-                left_b = new_left_b
+        prev = phead
+        begin = head
+        node = head
 
-            curr_node = next_node
+        while node:
+            counter += 1
+            next_node = node.next
+
+            if counter == k:
+                counter = 0
+                reverse(begin, node)
+                # prev -> [node -> begin] -> next_node
+                prev.next = node
+                begin.next = next_node
+
+                prev = begin
+                node = next_node
+            else:
+                # prev -> node -> next_node
+                node = next_node
+
+        return phead.next
+
+
+    def reverseKGroup0(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        if k < 2:
+            return head
+
+        def reverse(head, tail):
+            # head -> node .. -> tail ->
+            # tail -> node .. -> head ->
+            # returns tail as new head
+            prev = head
+            node = prev.next
+            while node:
+                next_node = node.next
+                node.next = prev
+                prev = node
+                if node == tail:
+                    break
+                node = next_node
+
+        phead = ListNode()
+        phead.next = head
+        counter = 0
+        node = head
+        start = head
+        before_start = phead
+
+        while node:
+            counter += 1
+            if counter == k:
+                # reverse [start .. node]
+                # to: before_start [node .. start] next_node
+                next_node = node.next
+                reverse(start, node)
+
+                before_start.next = node
+                start.next = next_node
+
+                before_start = start
+                start = next_node
+
+                node = next_node
+                counter = 0
+            else:
+                node = node.next
 
         return phead.next
