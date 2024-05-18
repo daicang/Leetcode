@@ -51,11 +51,13 @@ class Solution:
 
     def parse_string(self, tokens) -> str:
         # str := <num>[<str>] | <str><str>
+        # recursive solution
         if not tokens:
             return ''
 
         token = tokens.pop(0)
         if token.type == Token.num:
+            # <num>[<str>]
             n = token.val
             assert tokens.pop(0).type == Token.lparen
 
@@ -78,6 +80,7 @@ class Solution:
             return n * self.parse_string(content) + self.parse_string(tokens)
 
         else:
+            # <str><str>
             assert token.type == Token.string, token.type
             return token.val + self.parse_string(tokens)
 

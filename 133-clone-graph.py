@@ -23,4 +23,3 @@ class Solution(object):
             node_copy.neighbors.append(self.cloneGraph(neighbor))
 
         return node_copy
-
