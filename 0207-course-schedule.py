@@ -9,15 +9,17 @@ class Solution:
         for course, dependency in prerequisites:
             graph[course].append(dependency)
 
-        visited = [False] * numCourses
+        checked = [False] * numCourses
         path = [False] * numCourses
 
         def traverse(i):
             if path[i]:
                 return False
-            if visited[i]:
+
+            if checked[i]:
                 return True
-            visited[i] = True
+            checked[i] = True
+
             path[i] = True
             for dep in graph[i]:
                 if traverse(dep) is False:

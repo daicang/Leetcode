@@ -3,17 +3,16 @@
 class Solution:
     def lengthOfLongestSubstring(self, s: str) -> int:
         last_pos = {}
-        start = 0
         maxlen = 0
+        start_idx = 0
 
         for i, ch in enumerate(s):
-            if last_pos.get(ch) is not None:
-                start = max(start, last_pos[ch] + 1)
-            maxlen = max(maxlen, i-start+1)
+            if ch in last_pos:
+                start_idx = max(start_idx, last_pos[ch] + 1)
             last_pos[ch] = i
+            maxlen = max(maxlen, i - start_idx + 1)
 
         return maxlen
-
 
 s = Solution()
 
