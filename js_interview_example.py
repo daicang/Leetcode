@@ -1,7 +1,6 @@
 
 '''
 input:
-
 m = 3.28 ft
 ft = 12 in
 hr = 60 min
