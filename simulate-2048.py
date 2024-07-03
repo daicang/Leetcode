@@ -1,11 +1,8 @@
 
+import random
+
 # Simulate 2048 game
 class Game:
-
-    move_up = 'u'
-    move_down = 'd'
-    move_left = 'l'
-    move_right = 'r'
 
     def __init__(self, n):
         self.finished = False
@@ -26,25 +23,28 @@ class Game:
             i, j = 0, self.n-1
             while i < j:
                 row[i], row[j] = row[j], row[i]
+                i += 1
+                j -= 1
 
     def transpose(self):
         for i in range(self.n):
             for j in range(i+1, self.n):
                 self.board[i][j], self.board[j][i] = self.board[j][i], self.board[i][j]
 
-    def move(self, d):
+    def move(self, direction):
         if self.finished:
             return
-        if d == self.move_right:
+
+        if direction == 'r':
             self.move_right()
-        elif d == self.move_left:
+        elif direction == 'l':
             self.move_left()
-        elif d == self.move_up:
+        elif direction == 'u':
             self.move_up()
-        elif d == self.move_down:
+        elif direction == 'd':
             self.move_down()
         else:
-            raise Exception('invalid direction')
+            raise Exception(f'invalid direction: {direction}')
 
     def move_up(self):
         self.transpose()
@@ -81,3 +81,37 @@ class Game:
         self.reverse_rows()
         self.move_left()
         self.reverse_rows()
+
+    def print(self):
+        print('')
+        for row in self.board:
+            print(' '.join([str(i) for i in row]))
+        print('')
+
+    def new2(self):
+        while True:
+            x = random.randint(0, self.n-1)
+            y = random.randint(0, self.n-1)
+            if self.board[x][y] != 0:
+                continue
+            self.board[x][y] = 2
+            return
+
+    def run(self):
+        if self.finished:
+            print('Finished!')
+            return
+
+        while True:
+            self.new2()
+            self.print()
+            cmd = input('input: [u]p, [d]own, [l]eft, [r]ight')
+            self.move(cmd)
+            self.print()
+            if self.finished:
+                print('Finished!')
+                break
+
+
+g = Game(4)
+g.run()
