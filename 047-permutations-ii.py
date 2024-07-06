@@ -1,32 +1,25 @@
-class Solution(object):
-    def permuteUnique(self, nums):
-        """
-        :type nums: List[int]
-        :rtype: List[List[int]]
-        """
-        permuations = []
 
-        def backtrack(start):
-            if start == len(nums)-1:
-                permuations.append(nums[:])
-            used = set()
-            for i in range(start, len(nums)):
-                if nums[i] in used:
-                    continue
-                used.add(nums[i])
-                nums[start], nums[i] = nums[i], nums[start]
-                backtrack(start+1)
-                nums[start], nums[i] = nums[i], nums[start]
+class Solution:
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        counter = defaultdict(int)
+        results = []
 
-        backtrack(0)
-        return permuations
+        for n in nums:
+            counter[n] += 1
 
+        def traverse(path):
+            # dfs traverse with dict for de-duplication
+            if len(path) == len(nums):
+                results.append(path[:])
+                return
 
-inputs = [
-    [2,2,1,1],
-]
+            for n, count in counter.items():
+                if count > 0:
+                    counter[n] -= 1
+                    path.append(n)
+                    traverse(path)
+                    path.pop()
+                    counter[n] += 1
 
-s = Solution()
-
-for input in inputs:
-    print s.permuteUnique(input)
+        traverse([])
+        return results
