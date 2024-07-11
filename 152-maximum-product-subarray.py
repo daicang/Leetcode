@@ -1,32 +1,12 @@
-from typing import List
-
 class Solution:
     def maxProduct(self, nums: List[int]) -> int:
-        max_arr = [None] * len(nums)
-        min_arr = [None] * len(nums)
-
+        last_max = last_min = max_p = nums[0]
         for i, n in enumerate(nums):
-            if i == 0:
-                max_arr[0] = n
-                min_arr[0] = n
-                continue
+            if i > 0:
+                max_tmp = last_max * n
+                min_tmp = last_min * n
+                last_max = max(n, max_tmp, min_tmp)
+                last_min = min(n, max_tmp, min_tmp)
+                max_p = max(max_p, last_max)
 
-            if n >= 0:
-                max_arr[i] = max(n, n * max_arr[i-1])
-                min_arr[i] = min(n, n * min_arr[i-1])
-            else:
-                max_arr[i] = max(n, n * min_arr[i-1])
-                min_arr[i] = min(n, n * max_arr[i-1])
-
-        return max(max_arr)
-
-s = Solution()
-
-data = [
-    [2,3,-2,4],
-    [-2, 0, -1]
-]
-
-for d in data:
-    print(s.maxProduct(d))
-
+        return max_p

@@ -3,11 +3,9 @@ class Solution:
         # backpack
         # time: O(n*budget)
         # space: O(budget)
-        n = len(present)
-        dp = [0] * (budget+1)
-        for i in range(n):
-            value = future[i] - present[i]
-            for spending in range(budget, present[i]-1, -1):
-                dp[spending] = max(dp[spending], dp[spending-present[i]]+value)
-
-        return dp[-1]
+        profits = [0] * (budget+1)
+        for cost, price in zip(present, future):
+            profit = price - cost
+            for p in range(budget, cost-1, -1):
+                profits[p] = max(profits[p], profits[p-cost]+profit)
+        return profits[-1]
