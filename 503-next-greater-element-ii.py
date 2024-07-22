@@ -1,17 +1,16 @@
-from typing import List
-
 class Solution:
     def nextGreaterElements(self, nums: List[int]) -> List[int]:
-        result = []
-        arr = nums[::-1]
-        stack = nums[::-1]
-        for n in arr:
-            while stack and stack[-1] <= n:
+        # monotonic stack
+        nums = nums[::-1]
+        stack = nums[:]  # must copy!
+        greaters = []  # previous greater element
+
+        for val in nums:
+            while stack and stack[-1] <= val:
                 stack.pop()
             if stack:
-                result.append(stack[-1])
+                greaters.append(stack[-1])
             else:
-                result.append(-1)
-            stack.append(n)
-
-        return result[::-1]
+                greaters.append(-1)
+            stack.append(val)
+        return greaters[::-1]
