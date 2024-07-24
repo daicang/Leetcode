@@ -1,14 +1,12 @@
-from typing import List
-
 class Solution:
-    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
+    def dailyTemperatures(self, temp: List[int]) -> List[int]:
         stack = []
-        days = [0] * len(temperatures)
+        answer = [0] * len(temp)
 
-        for i, value in enumerate(temperatures):
-            while stack and stack[-1][1] < value:
-                j = stack.pop()[0]
-                days[j] = i - j
-            stack.append((i, value))
+        for i, val in enumerate(temp):
+            while stack and temp[stack[-1]] < val:
+                j = stack.pop()
+                answer[j] = i-j
+            stack.append(i)
 
-        return days
+        return answer

@@ -1,32 +1,44 @@
-class Solution(object):
-    def sumSubarrayMins(self, A):
-        """
-        :type A: List[int]
-        :rtype: int
-        """
-        length = len(A)
-
+class Solution:
+    def sumSubarrayMins(self, arr: List[int]) -> int:
+        s = 0
+        m = 10 ** 9 + 7
         stack = []
-        prev_smaller = [None] * length
-        for i in range(length):
-            while stack and A[i] <= A[stack[-1]]:
-                stack.pop()
+        for i, n in enumerate(arr):
+            # for each element in stack
+            # its previous element is the first lesser element on left side
+            # when poped, the coming element is the first lesser element on right side
+            while stack and arr[stack[-1]] >= n:
+                j = stack.pop()
+                left_len = j - stack[-1] if stack else 1
+                s += arr[j] * left_len * (i-j)
+            stack.append(i)
+        while stack:
+            j = stack.pop()
+            left_len = j - stack[-1] if stack else 1
+            right_len = len(arr) - j
+            s += arr[j] * left_len * right_len
+        return s % m
+
+
+class Solution:
+    def sumSubarrayMins(self, arr: List[int]) -> int:
+        s = 0
+        m = 10 ** 9 + 7
+        stack = []
+        prev_smaller = [None] * len(arr)
+        next_smaller = [None] * len(arr)
+
+        for i, n in enumerate(arr):
+            while stack and arr[stack[-1]] >= n:
+                j = stack.pop()
+                next_smaller[j] = i
             prev_smaller[i] = stack[-1] if stack else -1
             stack.append(i)
 
-        stack = []
-        next_smaller = [None] * length
-        for i in range(length-1, -1, -1):
-            while stack and A[i] <= A[stack[-1]]:
-                stack.pop()
-            next_smaller[i] = stack[-1] if stack else length
-            stack.append(i)
+        while stack:
+            i = stack.pop()
+            next_smaller[i] = len(arr)
 
-        # print('input: %s' % A)
-        # print('prev-small: %s' % prev_smaller)
-        # print('next-small: %s' % next_smaller)
-
-        return sum([(i-prev_smaller[i]) * (next_smaller[i]-i) * A[i] for i in range(length)]) % (10**9 + 7)
-
-s = Solution()
-print(s.sumSubarrayMins([3,1,2,4]))
+        for i in range(len(arr)):
+            s += arr[i] * (i-prev_smaller[i]) * (next_smaller[i]-i)
+        return s % m
