@@ -1,39 +1,27 @@
-class Solution(object):
-    def letterCombinations(self, digits):
-        """
-        :type digits: str
-        :rtype: List[str]
-        """
-        if not digits:
-            return []
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        result = []
+        n = len(digits)
+        arr = [0, 0,
+            ('a', 'b', 'c'),
+            ('d', 'e', 'f'),
+            ('g', 'h', 'i'),
+            ('j', 'k', 'l'),
+            ('m', 'n', 'o'),
+            ('p', 'q', 'r', 's'),
+            ('t', 'u', 'v'),
+            ('w', 'x', 'y', 'z')]
 
-        itoch = {
-            '2': ['a', 'b', 'c'],
-            '3': ['d', 'e', 'f'],
-            '4': ['g', 'h', 'i'],
-            '5': ['j', 'k', 'l'],
-            '6': ['m', 'n', 'o'],
-            '7': ['p', 'q', 'r', 's'],
-            '8': ['t', 'u', 'v'],
-            '9': ['w', 'x', 'y', 'z']
-        }
+        def traverse(i, path):
+            if i == n:
+                if path:
+                    result.append(''.join(path))
+                return
+            index = int(digits[i])
+            for ch in arr[index]:
+                path.append(ch)
+                traverse(i+1, path)
+                path.pop()
 
-        last = []
-        curr = []
-
-        for ch in itoch[digits[0]]:
-            last.append(ch)
-
-        for d in digits[1:]:
-            for ch in itoch[d]:
-                for s in last:
-                    curr.append(s+ch)
-            last = curr
-            curr = []
-
-        return last
-
-
-
-s = Solution()
-print(s.letterCombinations('7'))
+        traverse(0, [])
+        return result
