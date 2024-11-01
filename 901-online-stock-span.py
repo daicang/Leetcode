@@ -9,8 +9,8 @@ class StockSpanner:
         while self.stack and self.stack[-1][1] <= price:
             self.stack.pop()
         if not self.stack:
-            starti = 0
+            ret = self.i
         else:
-            starti = self.stack[-1][0]
+            ret = self.i - self.stack[-1][0]
         self.stack.append((self.i, price))
-        return self.i - starti
+        return ret
