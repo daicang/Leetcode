@@ -1,37 +1,15 @@
-class Solution(object):
-    def minDistance(self, word1, word2):
-        """
-        :type word1: str
-        :type word2: str
-        :rtype: int
-        """
+class Solution:
+    def minDistance(self, word1: str, word2: str) -> int:
+        l1, l2 = len(word1), len(word2)
 
-        dp = []
-        l1 = len(word1)
-        l2 = len(word2)
-
-        if l1 == 0:
-            return l2
-        if l2 == 0:
-            return l1
-
-        for _ in range(l1+1):
-            dp.append([None] * (l2+1))
-
-        def solve(i1, i2):
-            if i1 < 0:
-                return i2+1
-            if i2 < 0:
-                return i1+1
-            if dp[i1][i2] is not None:
-                return dp[i1][i2]
-
+        @cache
+        def dp(i1, i2):
+            if i1 == l1:
+                return l2-i2
+            if i2 == l2:
+                return l1-i1
             if word1[i1] == word2[i2]:
-                val = min(solve(i1-1, i2-1), 1+solve(i1, i2-1), 1+solve(i1-1, i2))
-            else:
-                val = min(1+solve(i1-1, i2-1), 1+solve(i1, i2-1), 1+solve(i1-1, i2))
-            dp[i1][i2] = val
-            return val
+                return dp(i1+1, i2+1)
+            return min(dp(i1+1, i2+1), dp(i1, i2+1), dp(i1+1, i2)) + 1
 
-        return solve(l1-1, l2-1)
-
+        return dp(0, 0)
