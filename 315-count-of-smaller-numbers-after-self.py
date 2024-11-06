@@ -3,6 +3,39 @@
 
 from typing import List
 
+class BitIndexTree:
+
+    def __init__(self, n):
+        self.arr = [0] * (n+1)
+        self.n = n
+
+    def update(self, i, val):
+        while i <= self.n:
+            self.arr[i] += val
+            i += i & (-i)
+
+    def count(self, i):
+        s = 0
+        while i > 0:
+            s += self.arr[i]
+            i -= i & (-i)
+        return s
+
+class Solution:
+    def countSmaller(self, nums: List[int]) -> List[int]:
+        # Bit index tree
+        shift = 10001
+        n = len(nums)
+        bit = BitIndexTree(shift*2)
+        nums.reverse()
+        ans = []
+
+        for n in nums:
+            bit.update(n+shift, 1)
+            ans.append(bit.count(n+shift-1))
+
+        return ans[::-1]
+
 
 class SegmentTree:
 
@@ -116,6 +149,10 @@ class Solution:
 #         mergesort(list(enumerate(nums)))
 
 #         return smaller
+
+
+
+
 
 s = Solution()
 
