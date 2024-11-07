@@ -1,6 +1,19 @@
 
 
 class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+
+        @cache
+        def lcs(i1, i2):
+            if i1 == len(text1) or i2 == len(text2):
+                return 0
+            if text1[i1] == text2[i2]:
+                return lcs(i1+1, i2+1)+1
+            return max(lcs(i1+1, i2), lcs(i1, i2+1))
+
+        return lcs(0, 0)
+
+class Solution:
     def longestCommonSubsequence_dp0(self, text1: str, text2: str) -> int:
         # dp, AC but slow
         n1 = len(text1)
