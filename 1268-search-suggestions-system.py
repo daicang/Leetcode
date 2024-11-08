@@ -1,96 +1,42 @@
-class Solution(object):
-    def suggestedProducts(self, products, searchWord):
-        """
-        :type products: List[str]
-        :type searchWord: str
-        :rtype: List[List[str]]
-        """
+class Node:
+    def __init__(self):
+        self.val = {}
+        self.children = []
+        self.term = False
 
-        class TreeNode():
-            def __init__(self, ch):
-                self.ch = ch
-                self.child_dict = {}
-                self.suggests = []
+class Trie:
+    def __init__(self):
+        self.root = Node()
 
-            def has_child(self, ch):
-                return ch in self.child_dict
+    def insert(self, word):
+        node = self.root
+        for ch in word:
+            if ch not in node.val:
+                node.val[ch] = Node()
+            node = node.val[ch]
+            node.children.append(word)
+            node.children.sort()
+            node.children = node.children[:3]
+        node.term = True
 
-            def get_child(self, ch):
-                return self.child_dict[ch]
+    def find_child(self, word):
+        ans = []
+        node = self.root
+        for i, ch in enumerate(word):
+            if ch not in node.val:
+                for j in range(i, len(word)):
+                    ans.append([])
+                break
+            node = node.val[ch]
+            ans.append(node.children)
 
-            def add_child(self, ch):
-                child = TreeNode(ch)
-                self.child_dict[ch] = child
-
-            def add_suggest(self, word, level):
-                self.suggests.append(word)
-                self.suggests.sort()
-                self.suggests = self.suggests[:3]
-
-                if level < len(word)-1:
-                    child = self.get_child(word[level+1])
-                    child.add_suggest(word, level+1)
-
-            def suggest(self):
-                return self.suggests
-
-        root = TreeNode('')
-
-        # Generate prefix tree
-        for prod in products:
-            node = root
-            for ch in prod:
-                if not node.has_child(ch):
-                    node.add_child(ch)
-                node = node.get_child(ch)
-
-            node = root.get_child(prod[0])
-            node.add_suggest(prod, 0)
-
-        result = []
-        node = root
-        miss = False
-        for ch in searchWord:
-            if miss:
-                result.append([])
-                continue
-
-            if node.has_child(ch):
-                node = node.get_child(ch)
-                result.append(node.suggest())
-            else:
-                miss = True
-                result.append([])
-
-        return result
-
-s = Solution()
-
-data = [
-    [["mobile","mouse","moneypot","monitor","mousepad"], "mouse"],
-    [["havana"], "havana"],
-    [["bags","baggage","banner","box","cloths"], "bags"],
-    [["havana"], "tatiana"],
-]
-
-for i in data:
-    print s.suggestedProducts(*i)
+        return ans
 
 
-# Output: [
-# ["mobile","moneypot","monitor"],
-# ["mobile","moneypot","monitor"],
-# ["mouse","mousepad"],
-# ["mouse","mousepad"],
-# ["mouse","mousepad"]
-# ]
-# Explanation: products sorted lexicographically = ["mobile","moneypot","monitor","mouse","mousepad"]
-# After typing m and mo all products match and we show user ["mobile","moneypot","monitor"]
-# After typing mou, mous and mouse the system suggests ["mouse","mousepad"]
+class Solution:
+    def suggestedProducts(self, products: List[str], searchWord: str) -> List[List[str]]:
+        tree = Trie()
+        for w in products:
+            tree.insert(w)
 
-# Output: [["havana"],["havana"],["havana"],["havana"],["havana"],["havana"]]
-
-# Output: [["baggage","bags","banner"],["baggage","bags","banner"],["baggage","bags"],["bags"]]
-
-# Output: [[],[],[],[],[],[],[]]
-
+        return tree.find_child(searchWord)
