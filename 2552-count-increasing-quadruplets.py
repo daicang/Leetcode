@@ -15,3 +15,22 @@ class Solution:
                     # down, could be 3-2
                     count_3[i] += count_1
         return count
+
+    def countQuadruplets(self, nums: List[int]) -> int:
+        n = len(nums)
+        sl = [nums[0]]
+        count = 0
+
+        for j in range(1, n):
+            bisect.insort(sl, nums[j])
+            if nums[j] < nums[-1]:
+                c = 1
+            else:
+                c = 0
+            for k in range(n-2, j, -1):
+                if nums[j] < nums[k]:
+                    c += 1
+                else:
+                    count += bisect_left(sl, nums[k]) * c
+
+        return count
