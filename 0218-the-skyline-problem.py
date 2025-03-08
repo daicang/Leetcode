@@ -3,6 +3,68 @@ import heapq
 
 class Solution:
     def getSkyline(self, buildings: List[List[int]]) -> List[List[int]]:
+        # TLE
+        # Time: O(n^2)
+        # Space: O(n)
+        edges = set()
+        skyline = []
+        for left, right, h in buildings:
+            edges.add(left)
+            edges.add(right)
+
+        edges = sorted(list(edges))
+
+        for edge in edges:
+            h = 0
+            for left, right, height in buildings:
+                if left <= edge < right:
+                    h = max(h, height)
+            if skyline and h == skyline[-1][1]:
+                continue
+            skyline.append([edge, h])
+
+        return skyline
+
+    def getSkyline(self, buildings: List[List[int]]) -> List[List[int]]:
+        # Single heapq
+        # Time: O(nlog(n))
+        # Space: O(n)
+        edges = []
+        for i, build in enumerate(buildings):
+            edges.append([build[0], i])
+            edges.append([build[1], i])
+
+        edges.sort()
+
+        q = []
+        skyline = []
+        i = 0
+
+        while i < len(edges):
+            x = edges[i][0]
+
+            # same x for multiple buildings
+            while i < len(edges) and edges[i][0] == x:
+                build_i = edges[i][1]
+                left, right, height = buildings[build_i]
+                if left == x:
+                    # entering this building
+                    heapq.heappush(q, [-height, right])
+                i += 1
+
+            while q and q[0][1] <= x:
+                # exiting the building
+                heapq.heappop(q)
+
+
+            h = -q[0][0] if q else 0
+
+            if not skyline or h != skyline[-1][1]:
+                skyline.append([x, h])
+
+        return skyline
+
+    def getSkyline(self, buildings: List[List[int]]) -> List[List[int]]:
         # print('input: ', buildings)
         # l, r, h
         skyline = []

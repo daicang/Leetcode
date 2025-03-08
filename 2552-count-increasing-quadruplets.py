@@ -17,6 +17,8 @@ class Solution:
         return count
 
     def countQuadruplets(self, nums: List[int]) -> int:
+        # Time: O(n^2log(n))
+        # Space: O(n)
         n = len(nums)
         sl = [nums[0]]
         count = 0
@@ -28,9 +30,11 @@ class Solution:
             else:
                 c = 0
             for k in range(n-2, j, -1):
-                if nums[j] < nums[k]:
+                if nums[k] > nums[j]:
                     c += 1
                 else:
+                    # how many numbers lower than k (from bisect)
+                    # times how many numbers larger than j
                     count += bisect_left(sl, nums[k]) * c
 
         return count
